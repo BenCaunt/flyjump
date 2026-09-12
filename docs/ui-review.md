@@ -1,7 +1,7 @@
-# Local interface review
+# Interface review
 
-September 12, 2026. Preview branch: `preview/restore-console-design`.
-Publication is explicitly on hold until the owner requests deployment.
+September 12, 2026. Reviewed on `preview/restore-console-design`.
+The owner approved the reviewed interface for production on September 12, 2026.
 
 ## Direction
 
