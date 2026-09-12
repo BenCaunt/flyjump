@@ -12,7 +12,9 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
-    "check:assets": "node scripts/check-assets.mjs"
+    "check:assets": "node scripts/check-assets.mjs",
+    "train": "node --experimental-strip-types scripts/train.mjs",
+    "benchmark": "node --experimental-strip-types scripts/benchmark.mjs"
   },
   "dependencies": {
     "react": "19.2.6",

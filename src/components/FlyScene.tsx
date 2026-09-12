@@ -23,7 +23,7 @@ function keyLabel(letter: string) {
   canvas.height = 128;
   const context = canvas.getContext("2d");
   if (!context) return null;
-  context.fillStyle = "#17130f";
+  context.fillStyle = "#d6dce3";
   context.font = "600 26px ui-monospace, monospace";
   context.textAlign = "center";
   context.textBaseline = "middle";
@@ -133,16 +133,20 @@ export function FlyScene({ controls }: { controls: RefObject<{ left: number; rig
     keyboard.add(keyboardBase);
 
     let leftKey: THREE.Mesh | null = null;
+    let rightKey: THREE.Mesh | null = null;
     const labelTextures: THREE.Texture[] = [];
     for(let row=0;row<4;row++)for(let col=0;col<11;col++){
       if(row===3&&col>=3&&col<=7)continue;
       const cap=new THREE.Mesh(new THREE.BoxGeometry(.32,.1,.3),keyMaterial);
       cap.position.set((col-5)*.4,.13,(row-2)*.38);keyboard.add(cap);
     }
-    const space=new THREE.Mesh(new THREE.BoxGeometry(1.3,.1,.34),activeKeyMaterial);
-    space.position.set(-.002,.13,.365);keyboard.add(space);leftKey=space;
-    const texture=keyLabel("SPACE");
-    if(texture){labelTextures.push(texture);const label=new THREE.Mesh(new THREE.PlaneGeometry(.5,.16),new THREE.MeshBasicMaterial({map:texture,transparent:true}));label.rotation.x=-Math.PI/2;label.position.set(0,.056,0);space.add(label);}
+    for(const [index,letter] of ['SPACE','↓'].entries()){
+      const cap=new THREE.Mesh(new THREE.BoxGeometry(.62,.1,.34),keyMaterial);
+      cap.position.set(index===0?-.34:.34,.13,.365);keyboard.add(cap);
+      if(index===0)leftKey=cap;else rightKey=cap;
+      const texture=keyLabel(letter);
+      if(texture){labelTextures.push(texture);const label=new THREE.Mesh(new THREE.PlaneGeometry(.5,.22),new THREE.MeshBasicMaterial({map:texture,transparent:true}));label.rotation.x=-Math.PI/2;label.position.set(0,.056,0);cap.add(label);}
+    }
 
     let pointerDown = false;
     let lastX = 0;
@@ -180,8 +184,9 @@ export function FlyScene({ controls }: { controls: RefObject<{ left: number; rig
     const animate = () => {
       const leftPress = controls.current.left;
       const rightPress = controls.current.right;
-      if (leftKey) leftKey.position.y = 0.13 - leftPress * 0.055;
-      // Both anatomical forelegs press the same SPACE key.
+      if (leftKey) {leftKey.position.y = 0.13 - leftPress * 0.055;leftKey.material=leftPress?activeKeyMaterial:keyMaterial;}
+      if (rightKey) {rightKey.position.y = 0.13 - rightPress * 0.055;rightKey.material=rightPress?activeKeyMaterial:keyMaterial;}
+      // The forelegs visualize separate jump and duck commands.
       // Rotate around each shoulder so the distal toe follows the 55mm key travel.
       const toeY = -.1033, toeZ = .0615;
       const toeAngle = (press: number) => Math.asin((toeY - press * .055 / 5) / Math.hypot(toeY, toeZ)) - Math.atan2(toeY, toeZ);
@@ -218,13 +223,13 @@ export function FlyScene({ controls }: { controls: RefObject<{ left: number; rig
   }, [controls]);
 
   return (
-    <div ref={host} className="three-viewport fly-viewport" aria-label="Anatomically detailed flybody model pressing the SPACE key on a keyboard">
+    <div ref={host} className="three-viewport fly-viewport" aria-label="Anatomically detailed flybody model pressing SPACE and Down keys on a keyboard">
       <div className={`fly-load ${loadState}`} aria-live="polite">
         {loadState === "loading" && <><span lang="en">Loading flybody model</span><span lang="tr">Flybody modeli yükleniyor</span></>}
         {loadState === "ready" && <><span lang="en">Anatomical body loaded</span><span lang="tr">Anatomik beden yüklendi</span></>}
         {loadState === "error" && <><span lang="en">Body model unavailable</span><span lang="tr">Beden modeli yüklenemedi</span></>}
       </div>
-      <div className="key-hud"><kbd>SPACE</kbd><span>Jump command · rule-based controller</span></div>
+      <div className="key-hud"><kbd>SPACE</kbd><span>Jump</span><kbd>↓</kbd><span>Duck / fast fall · live command</span></div>
     </div>
   );
 }
