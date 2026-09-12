@@ -52,6 +52,7 @@ export function App() {
       setMode("neural");
       setStatus(`Published checkpoint · generation ${m.generation}`);
       setHistory([]);
+      setReport(null);
       setReset((x) => x + 1);
       try {
         localStorage.removeItem(SAVE_KEY);
@@ -209,7 +210,8 @@ export function App() {
           <nav aria-label="Main navigation">
             <a href="#experiment">Experiment</a>
             <a href="#training">Training</a>
-            <a href="#science">Method & credits</a>
+            <a href="#results">Results</a>
+            <a href="#science">Method</a>
             <a
               href="https://github.com/cobanov/flyjump"
               aria-label="Source on GitHub"
@@ -231,22 +233,19 @@ export function App() {
       <main id="top">
         <section className="hero">
           <div>
-            <p className="eyebrow">A CONNECTOME LEARNING EXPERIMENT</p>
-            <h1>
-              A small fly circuit. <br />
-              One familiar dinosaur.
-            </h1>
+            <p className="eyebrow">CHROMIUM DINO × MALECNS</p>
+            <h1>A fly circuit playing Dino.</h1>
             <p>
-              Watch a measured neural circuit drive the original Chromium Dino.
-              Train its action readout, inspect every decision, and reproduce
-              the results.
+              An 80-neuron model uses measured fly connections to choose when to
+              run, jump or duck. Watch its decisions live, or train a new
+              controller below.
             </p>
           </div>
           <div className="experiment-spec">
-            <span>80 modeled cells</span>
+            <span>80 modeled neurons</span>
             <span>1,296 measured connections</span>
             <span>243 trainable parameters</span>
-            <a href="#science">What is real here? ↓</a>
+            <a href="#science">How it works ↓</a>
           </div>
         </section>
         <section id="experiment" aria-label="Live experiment">
@@ -257,7 +256,7 @@ export function App() {
               <span>
                 {mode === "neural"
                   ? model
-                    ? `Connectome + readout · gen ${model.generation}`
+                    ? `Trained agent · generation ${model.generation}`
                     : "Loading checkpoint…"
                   : mode === "rule"
                     ? "Rule baseline"
@@ -276,7 +275,7 @@ export function App() {
                     setDecision(null);
                   }}
                 >
-                  <option value="neural">Connectome + readout</option>
+                  <option value="neural">Trained agent</option>
                   <option value="rule">Rule baseline</option>
                   <option value="manual">Manual</option>
                 </select>
@@ -290,7 +289,7 @@ export function App() {
           <div className="workbench">
             <section className="panel environment-panel">
               <h2>
-                <span>01 / ENVIRONMENT</span>
+                <span>01 / GAME</span>
                 <small>Chromium Dino · 60 Hz</small>
               </h2>
               <Runner
@@ -322,8 +321,8 @@ export function App() {
             </section>
             <section className="panel network-panel">
               <h2>
-                <span>02 / ACTION READOUT</span>
-                <small>Actual activations & weights</small>
+                <span>02 / DECISION NETWORK</span>
+                <small>Trained action readout</small>
               </h2>
               <PolicyNetwork
                 decision={decision}
@@ -331,7 +330,9 @@ export function App() {
                 active={mode === "neural" && !!decision}
               />
               <div className="panel-bottom">
-                <span>Highest score selects the key</span>
+                <span title="These are raw network scores, not probabilities.">
+                  Largest score chooses the action
+                </span>
                 <span>Green + / orange −</span>
               </div>
             </section>
@@ -354,7 +355,7 @@ export function App() {
             </section>
             <section className="panel brain-panel">
               <h2>
-                <span>04 / CONNECTOME STATE</span>
+                <span>04 / BRAIN ACTIVITY</span>
                 <small>MaleCNS v1.0 subset</small>
               </h2>
               <BrainScene
@@ -362,7 +363,7 @@ export function App() {
                 active={mode === "neural" && !!decision}
               />
               <div className="panel-bottom">
-                <span>Computed activity, dimensionless</span>
+                <span>Simulated activity · unitless</span>
                 <a href="/data/connectome/graph.json">
                   Inspect all 80 cells ↗
                 </a>
@@ -375,7 +376,7 @@ export function App() {
               <strong>{String(telemetry.score).padStart(5, "0")}</strong>
             </div>
             <div>
-              <span>BEST · SESSION</span>
+              <span>SESSION BEST</span>
               <strong>{String(telemetry.best).padStart(5, "0")}</strong>
             </div>
             <div>
@@ -399,10 +400,9 @@ export function App() {
             </div>
           </div>
           <p className="bench-note">
-            The circuit and readout choose the keys in neural mode. The fly rig
-            illustrates that output. Manual input takes over. Pause freezes the
-            experiment; Train from scratch performs new learning in a separate
-            worker.
+            Use Space / ↑ to jump and ↓ to duck or fall faster. Keyboard or
+            touch input takes over from the agent. Ordinary play uses a trained
+            model; learning starts only when you choose Train from scratch.
           </p>
         </section>
         <div id="training">

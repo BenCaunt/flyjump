@@ -1,12 +1,12 @@
 export function Methods() {
   return (
     <section id="science" className="methods">
-      <p className="eyebrow">METHOD, LIMITS & SHARED WORK</p>
-      <h2>Real learning. A clearly bounded model.</h2>
+      <p className="eyebrow">METHOD & LIMITS</p>
+      <h2>From game state to a key press</h2>
       <p className="section-intro">
-        Fly Dino joins an original game engine, measured fly connectivity, and a
-        trainable controller. Each part has a different role. Here is exactly
-        what runs.
+        A connectome is a map of neurons and their connections. Here, a small
+        part of that map becomes a simulated circuit. A separate neural network
+        learns to turn its activity into game controls.
       </p>
       <ol className="method-steps">
         <li>
@@ -33,20 +33,20 @@ export function Methods() {
           <span>DECIDE</span>
           <h3>Choose a key</h3>
           <p>
-            The activities of 16 descending cells enter a 16–12–3 neural
-            readout. Its largest raw score chooses Run, Jump or Duck at 30 Hz.
-            There is no direct game-state shortcut or rule fallback in this
-            controller.
+            Sixteen output cells feed a small decision network, called a
+            readout: 16 inputs, 12 hidden units and 3 action scores. The largest
+            score chooses Run, Jump or Duck 30 times per second. There is no
+            direct game-state shortcut or rule fallback in this controller.
           </p>
         </li>
         <li>
           <span>LEARN</span>
           <h3>Improve through play</h3>
           <p>
-            Cross-entropy neuroevolution samples 64 readouts, evaluates them on
-            shared seeded courses and updates its search distribution from the
-            best eight. Only the 243 readout parameters are trained. Four
-            validation courses select the checkpoint.
+            The cross-entropy method (CEM) tries 64 candidate networks per
+            generation and uses the best eight to guide the next batch. Only the
+            243 readout parameters change. Four separate validation courses
+            select the saved model.
           </p>
         </li>
       </ol>
@@ -91,8 +91,7 @@ export function Methods() {
       </div>
       <h2 className="credits-title">Built on shared work</h2>
       <p className="section-intro">
-        Reuse is part of the experiment. Code and assets, data, and
-        methodological inspiration are credited separately.
+        The people, datasets and earlier experiments this project builds on.
       </p>
       <div className="credit-grid">
         <article>

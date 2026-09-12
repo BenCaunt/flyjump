@@ -44,10 +44,10 @@ export function PolicyNetwork({
         aria-label="Actual trained readout: 16 descending-cell activities, 12 tanh neurons, 3 action scores."
       >
         <text x="16" y="17">
-          DESCENDING
+          CIRCUIT OUT
         </text>
         <text x={narrow ? 184 : 267} y="17">
-          READOUT
+          HIDDEN
         </text>
         <text x={narrow ? 294 : 458} y="17">
           ACTIONS
@@ -146,7 +146,7 @@ export function PolicyNetwork({
           : !active
             ? "Readout inactive"
             : `${ACTIONS[d.action]} selected · generation ${model.generation}`}
-        <span>16 → 12 → 3 · 243 learned weights · 30 decisions/s</span>
+        <span>16 → 12 → 3 · 243 parameters · 30 decisions/s</span>
       </div>
     </div>
   );
