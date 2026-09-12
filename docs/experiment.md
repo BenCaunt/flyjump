@@ -1,69 +1,126 @@
-# Fly Jump: training a neural controller for an anatomical fly rig
+# Fly Dino v2: protocol and evidence
 
-## What the experiment demonstrates
+Recorded 2026-09-12. Environment ID: `flydino-chromium98-connectome-v2`.
 
-An artificial feed-forward network learns a runner-control policy from episode scores. Its selected action drives both the runner and the fly keyboard visualization. The UI exposes the actual input vector, tanh activations, signed weighted contributions and three output scores from the most recent inference. The largest raw score wins deterministically. These scores are not probabilities or Q-values. The UI samples decisions at roughly 10 Hz; inference runs at 30 Hz of simulated game time.
+## Question and scope
 
-This is **neuroevolution using the cross-entropy method (CEM)**, not DQN, PPO, backpropagation, NEAT topology evolution, or biological synaptic plasticity. It solves a reward-based control task by population search over neural weights. For broader context, see [Deep Neuroevolution (Such et al., 2017)](https://arxiv.org/abs/1712.06567) and [Evolution Strategies (Salimans et al., 2017)](https://arxiv.org/abs/1703.03864). Our small CEM implementation is not a reproduction of either paper's algorithm or reported benchmark.
+Can a trainable readout learn the original Dino task when its only inputs are the computed activities of a small, measured MaleCNS circuit? Does removing that circuit's activity destroy the trained behavior?
 
-## Environment contract
+This experiment demonstrates numerical learning and a real causal computation path. It does **not** test whether biological topology is better than an equally sized artificial or rewired network. It does not model the entire brain, measured electrophysiology, muscles, learning in a living animal, or plasticity of biological synapses.
 
-- Environment version: `flyjump-v1`.
-- Deterministic physics: 120 steps/s, gravity 1800 px/s², initial upward velocity 650 px/s. Game speed grows from 280 to 520 px/s.
-- Seeded cactus widths/heights and low, middle, high birds. Birds become eligible after eight simulated seconds. Collision terminates an episode.
-- Actions: `0=run`, `1=jump`, `2=duck`. The action is held for four physics steps, so decisions happen at 30 Hz. Jump while airborne has no effect. Duck while airborne causes fast fall; grounded duck reduces height and increases width of the collision box. A held jump action can start another jump after landing.
-- Human-only early key release also supports short hops. The three-action learned policy uses fast fall to modulate its trajectory; it does not have a separate release-jump action.
-- Observation: nearest uncleared obstacle distance, width, height, bottom altitude, game speed, player elevation, vertical velocity and grounded flag. Normalization is defined in `src/lib/policy.ts`. No future spawn seed, action hint or rule-controller output enters the observation.
-- Reward/fitness: episode distance / 10 (the displayed game score), capped at 180 simulated seconds. No action-specific reward or expert demonstrations. Early collision ends accumulation.
-- The policy sees structured geometry, not pixels. Calling this an image-based or connectome-based agent would be inaccurate.
+## Original environment
 
-## Training protocol
+The Chromium Authors' `offline.js`, sprite definitions and 2× sprite sheet are pinned to Chromium **98.0.4758.55**, commit `0b0619d8287f51c4fca09d0385c163d30bd35c4b`. Source files are vendored unchanged under `vendor/chromium`; hashes cover those files and the generated wrapper. BSD-3-Clause license is bundled and linked on the page.
 
-Network: 8 inputs, one 12-unit tanh layer and 3 linear outputs. There are 147 trainable scalar weights and biases. Architecture remains fixed.
+`build-chromium.mjs` surrounds the original source with a lexical platform adapter: each episode has its own seeded RNG and fixed clock. `runner.ts` instantiates original Trex, Horizon and DistanceMeter classes and calls the original `Runner.update()`, including original jump physics, cactus/bird generation, detailed collision boxes, speed curve, score and night-mode logic.
 
-Each generation evaluates 64 candidates on the same three newly sampled training seeds (range 1–900,000). The eight highest-scoring candidates update a diagonal Gaussian search distribution, with 0.7 update weight and a 0.07 standard-deviation floor. One candidate preserves the previous champion. Fitness is mean score over those three courses.
+Integration choices: 600×150 logical game area on all devices; desktop obstacle rules; start at the post-intro running position; omit browser offline-page DOM, audio and restart-icon animation; externally schedule a fixed **60 Hz** tick; automatic controllers restart after collision. Held actions use key transitions, without OS key-repeat synthesis. Original keyboard behavior, including minimum jump height and fast fall, is retained through Trex methods. No rewritten collision model or modified obstacle physics is used.
 
-A generation winner is compared on the fixed validation seeds 1,000,001–1,000,004, each capped at 180 seconds. Strict validation improvement replaces the champion. Validation is part of model selection and is **not** held-out test performance. Training runs for 80 generations, evaluating 15,680 episodes including validation. The published run uses training RNG seed **20260912**; its retained champion came from generation **11**. The population continued optimizing until generation 80 even though the validation champion did not change.
+The rendered game uses the same update path and consumes the same random sequence as headless rollouts. A regression test compares every state step with/without a drawing surface. Headless rendering is a no-op, not a separate simulator. Score is Chromium's `getActualDistance(ceil(distanceRan))` (coefficient 0.025), not v1's custom distance scale.
 
-The first prototype used a shorter horizon; the published training uses 180-second courses to include maximum running speed. The test set was first evaluated after this horizon was fixed. The final algorithm and selected model were not changed in response to the held-out results.
+## Measured circuit and selection
 
-The Web Worker executes these rollouts independently of rendering speed. The visible fly plays a separate course with the current champion. It does not show all 64 candidate episodes. Training charts come from actual rollouts, not a timer animation. Stop terminates the worker and retains the last received champion. A checkpoint contains policy weights, not the complete search distribution/RNG state, so importing a model enables inference, not exact optimizer resumption. Train from scratch always starts a new run.
+Data: [MaleCNS v1.0 downloads](https://male-cns.janelia.org/download/), minimum confidence 0.5. [Manifest](../public/data/connectome/manifest.json) pins SHA-256 of all raw tables and the exact exported graph. Data creators: FlyEM / HHMI Janelia and collaborators; CC BY 4.0.
 
-## Published benchmark
+Selection is deterministic and uses anatomy alone, before training:
 
-100 fixed test seeds **2,000,001–2,000,100**, disjoint from both training and validation. Every policy faces the same courses with a 180-second cap. The rule baseline uses its original 120 Hz control loop; the neural and random policies act at 30 Hz. This is a practical hand-coded reference, not a compute-matched learning algorithm.
+1. For each of `LC4, LC11, LC9, LC15, LC16, LC17, LC21, LPLC2`, retain four visual cells with largest total direct contact count onto descending neurons with soma coordinates.
+2. Take the union of the top two descending targets per visual type; fill to 16 by total contact rank. Break ties by body ID.
+3. Add the 32 strongest two-hop bridge cells, ranked by the minimum of summed selected-visual input and selected-descending output contact counts.
+4. Retain **every** measured directed edge among the selected cells, including one-contact and recurrent edges. Do not synthesize edges.
 
-| Controller | Completed 180s | Mean survival | Mean score |
-| --- | ---: | ---: | ---: |
-| Learned network | 54 / 100 | 104.656 s | 4364.914 |
-| Rule baseline | 100 / 100 | 180.000 s | 7665.982 |
-| Random action | 0 / 100 | 4.961 s | 141.020 |
-| Idle | 0 / 100 | 4.892 s | 139.004 |
+Result: **80 cells, 1,296 directed edges, 26,029 contacts**, 32 driven visual cells, 32 intermediates, 16 readout cells. All output cells are reachable from input through nonzero-sign measured edges. The one unclear transmitter cell retains its anatomical connections but contributes zero outgoing modeled drive. There are 61 acetylcholine, 13 GABA, 5 glutamate and 1 unclear annotations.
 
-Raw per-course results include seeds, termination, survival, score, jump/duck counts and action counts. `benchmark.json` also contains the checkpoint SHA-256. `training.json` records the configuration, seed, wall-clock duration and generation-level train/validation scores. CLI timing depends on hardware and is not a browser speed claim.
+Selection favors a compact, directly connected visual-to-descending circuit. This selection and its boundary truncation are strong inductive biases, not a representative sample of the complete CNS. No physiological receptive fields are inferred.
 
-The learned controller materially outperforms random and idle controls, but the designed rule baseline remains stronger. A 100-course benchmark from **one training run** does not establish robustness across training seeds. Four validation courses are a small selection set; perfect validation does not imply perfect generalization. Repeatedly tuning against these public test seeds would turn them into a development set; use a fresh, declared test range for future tuned versions. Random/idle deaths happen at the first cactus, before birds spawn, so those baselines do not demonstrate skill on aerial hazards.
+## Observation encoder and recurrence
 
-## What is and is not a fly brain
+Eight engineered state features, using the nearest obstacle whose trailing edge has not passed the dinosaur's x=50:
 
-Flybody provides the anatomical body mesh. MaleCNS provides measured soma positions in the separate atlas tab. The atlas overlay responds to game-image brightness/motion, with no biological receptive-field mapping or inferred firing. The artificial control network does not use MaleCNS connectivity, membrane potentials, synaptic weights, sensory neurons or muscle dynamics. The forelegs visualize discrete game commands through a kinematic animation.
+| Channel | Feature | Encoding | Driven cell type |
+| --- | --- | --- | --- |
+| 0 | Proximity | `1 - clamp((obstacle.x - 50)/600, 0, 1)`; 0 when absent | LC4 |
+| 1 | Obstacle width | `width / 75`; 0 absent | LC11 |
+| 2 | Obstacle height | `height / 60`; 0 absent | LC9 |
+| 3 | Obstacle altitude | `bottom / 60`; 0 absent | LC15 |
+| 4 | Speed | `pixelsPerSecond / 780` | LC16 |
+| 5 | Player jump height | `heightAboveGround / 100` | LC17 |
+| 6 | Player vertical velocity | `(velocity / 900 + 1) / 2` | LC21 |
+| 7 | Ground contact | 1 grounded, 0 airborne | LPLC2 |
 
-A defensible blog description is: **“I trained a neural controller to play a runner and visualized its decisions through an anatomical fly keyboard rig.”** Training an actual fly connectome would require a different experiment: synaptic connectivity, neuronal dynamics, a justified sensory/motor interface and appropriate biological validation.
+These are structured game observations inspired by CodeBullet's input design, **not pixels**. Assignment to cell types is an arbitrary, fixed engineering encoder and has no claimed biological interpretation. Inputs can briefly exceed nominal normalization bounds under original physics; they are not all clipped. No rule policy supplies targets or actions during neural training.
 
-## Reproduction and sharing
+A driven cell receives `u[i] = 2 * (feature[channel] - 0.5)`; all others receive zero external drive. Let `c[j,i]` be the measured contact count and `s[j]` the assumed presynaptic sign: acetylcholine +1, GABA/glutamate −1, unclear/modulatory 0. Incoming signed weights are normalized by total absolute signed contact count at each postsynaptic cell:
 
-```sh
-npm ci
-npm test
-npm run train -- 20260912 80
-npm run benchmark
-npm run build
+```text
+W[j,i] = c[j,i] * s[j] / sum_k(c[k,i] * abs(s[k]))
+h_new[i] = 0.3 * h[i] + 0.7 * tanh(u[i] + 1.4 * sum_j W[j,i] * h[j])
 ```
 
-Training and benchmark commands overwrite the public JSON artifacts. The benchmark test verifies that the bundled model reproduces the recorded per-course results. In the UI, select Train from scratch, export the model and learning history, then run Benchmark current model and export its report. Checkpoints are versioned and validated on import; the 147 weights must be finite.
+Zero denominators produce zero drive. Three synchronous iterations run at each 30 Hz action decision. State is reset to zero for each episode and persists between decisions. JavaScript Float64 arithmetic is used in all environments. The normalized signed activity is dimensionless; it is neither firing rate nor membrane voltage. The transmitter sign mapping, gain, leak and three iterations are simplified assumptions, not calibrated physiology.
 
-The [live bench](https://flyjump.cobanov.dev/) and repository can be shared with the published model and logs. Attribution requirements in the repository license and third-party notices still apply. This document provides material and evidence for a blog post; it is not an automatically published blog article.
+The readout receives `4 * h[outputCell]` from 16 selected descending cells. Its architecture is **16 inputs → 12 tanh hidden units → 3 linear scores**, with biases, totaling **243 parameters**. Argmax chooses Run, Jump or Duck. There is no direct observation connection to the trainable network. Brain-view colors use the same `h` state; the decision-network labels show the gain-scaled inputs. Network edges depict weighted signal contribution; scores are not probabilities.
 
-## Related connectome approaches
+## Actual learning
 
-See [the Doomfly, FlyDoom and fly-craftax source comparison](connectome-review.md). Doomfly performs plasticity on reconstructed edges but reports failed learning validation. Fly Jump currently supplies the conventional neural baseline for a future connectome-controlled comparison; it does not run the Doomfly model.
+Diagonal Gaussian cross-entropy method, independently implemented from the standard algorithm. This is score-based policy search / neuroevolution in an RL environment, not DQN, PPO, NEAT or backpropagation.
+
+- Training seed: **20260912**; additional predeclared replicas: **20260913**, **20260914**.
+- 80 generations, 64 candidates, 8 elites; 3 fresh shared training courses per generation.
+- Training course seeds sampled from `1..900000` by seeded LCG. Box–Muller Gaussian weight sampling.
+- Each rollout ends on collision or 180 seconds. Fitness: mean original Dino score over the three courses.
+- Candidate 0 preserves the current validation champion; others are sampled from per-parameter mean/sigma.
+- Initial mean 0, sigma 0.8; initial champion random Gaussian sigma 0.7.
+- Mean and sigma use 0.3 old + 0.7 elite statistics; sigma floor 0.07.
+- Every generation's best training candidate is evaluated on validation seeds **1100001–1100004**, 180 seconds each. Champion replaced only on strictly improved mean validation score.
+- **15,680 episodes per run**: 80 × (64 × 3 + 4). Published training time: 456.33 seconds on the development Mac mini (not a portable performance guarantee).
+
+Only readout weights change. The biological-edge graph, recurrence and encoder remain fixed. Normal gameplay runs inference only. Browser training performs genuine candidate rollouts in a Web Worker; the visible game uses the current validation champion. Stop terminates the worker and retains its latest checkpoint.
+
+## Held-out evaluation
+
+Exactly **100 test seeds: 2100001–2100100**, each capped at 180 seconds. These seeds are absent from training and validation, and changed from the already-inspected v1 split. The first declared training seed remains the published checkpoint regardless of other replicas' test scores. Architecture and weights were frozen before this test.
+
+| Controller | Completed / 100 | Mean survival | Mean original score |
+| --- | ---: | ---: | ---: |
+| Connectome + trained readout | **99** | **179.372 s** | **2885.75** |
+| Same readout, circuit silenced | 0 | 4.5085 s | 41.00 |
+| Initial untrained readout | 0 | 4.4918 s | 41.00 |
+| Handwritten rule baseline | 0 | 46.4927 s | 535.27 |
+| Uniform random actions at 30 Hz | 0 | 4.6622 s | 42.77 |
+| Idle | 0 | 4.5085 s | 41.00 |
+
+Published champion: **generation 32**, validation score **2591.75**. The run continues to generation 80 without replacing that champion. The handwritten rule baseline is a simple, untuned distance threshold; it is not a strong optimized controller. Do not interpret this table as outperforming all rule-based methods.
+
+[Per-course benchmark](../public/benchmarks/benchmark.json) includes actions, jumps, ducks, deaths and exact checkpoint. [Training history](../public/benchmarks/training.json) records every generation. [Replicas](../public/benchmarks/replicates.json) report all three training runs on the **same** held-out courses; those are not 300 independent courses. All per-replica models, logs and results are published. A topology-benefit claim would require matched artificial/rewired controls trained with equal budgets; that study is not included.
+
+### Independent training replicas
+
+| Training seed | Selected generation | Validation score | Completed / 100 | Mean survival |
+| --- | ---: | ---: | ---: | ---: |
+| 20260912 (published) | 32 | 2591.75 | 99 | 179.372 s |
+| 20260913 | 46 | 2898.00 | 85 | 174.396 s |
+| 20260914 | 33 | 2898.00 | 100 | 180.000 s |
+
+Across these three seeds the completion range is **85–100/100**. The second seed has a perfect four-course validation score but lower held-out completion; this shows why validation and test results are reported separately. There was no test-based checkpoint selection. Three runs remain a small sample.
+
+## Rebuilding data and code
+
+Raw source directory (approximately 1.1 GB; do not commit raw files):
+
+```sh
+mkdir -p /tmp/pinfly-data
+base=https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/flat-connectome
+curl -fL "$base/body-annotations-male-cns-v1.0-minconf-0.5.feather" -o /tmp/pinfly-data/annotations.feather
+curl -fL "$base/connectome-weights-male-cns-v1.0-minconf-0.5.feather" -o /tmp/pinfly-data/edges.feather
+curl -fL "$base/body-neurotransmitters-male-cns-v1.0.feather" -o /tmp/pinfly-data/neurotransmitters.feather
+uv run --with pyarrow --with numpy python scripts/build-connectome.py /tmp/pinfly-data
+npm run build:chromium
+npm run check:assets
+```
+
+The data builder rejects unexpected source hashes. The Chromium generator rebuilds a wrapper around unchanged vendored files; asset checks verify pinned source, sprites, graph and anatomical asset hashes. `npm test` reproduces the main benchmark, tests deterministic learning, input sensitivity and silencing, graph reachability, key transitions, original collision geometry and rendered/headless parity.
+
+## Prior version
+
+[v1 protocol](archive/v1/experiment.md) and [v1 artifacts](../public/benchmarks/archive-v1) are retained as historical records. They used a different, independently drawn runner and a conventional 8–12–3 controller. Their 54/100 result and illustrative anatomy overlay do not describe v2. v1 checkpoints are rejected by the v2 loader.

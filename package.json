@@ -1,6 +1,6 @@
 {
-  "name": "flyjump",
-  "version": "0.1.0",
+  "name": "flydino",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "license": "SEE LICENSE IN LICENSE",
@@ -14,7 +14,9 @@
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "check:assets": "node scripts/check-assets.mjs",
     "train": "node --experimental-strip-types scripts/train.mjs",
-    "benchmark": "node --experimental-strip-types scripts/benchmark.mjs"
+    "benchmark": "node --experimental-strip-types scripts/benchmark.mjs",
+    "build:chromium": "node scripts/build-chromium.mjs",
+    "benchmark:replicates": "node --experimental-strip-types scripts/benchmark-replicates.mjs"
   },
   "dependencies": {
     "react": "19.2.6",

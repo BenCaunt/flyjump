@@ -1,4 +1,4 @@
-name: Validate Fly Jump
+name: Validate Fly Dino
 on: [push, pull_request]
 permissions:
   contents: read

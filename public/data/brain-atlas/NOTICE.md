@@ -16,6 +16,6 @@ The export contains 140,024 measured positions. The current brain view shows 124
 
 Changes: filtering, body-ID sorting, and lossless float32/uint32 binary export. The display centers, rigidly rotates, uniformly scales and colors the points. Source coordinates and IDs remain unchanged in the binaries. Marker size is not anatomical soma size.
 
-Soma locations only, not neurites or the synaptic connectivity graph. Brain selection is superclass-based, not a complete anatomical brain segmentation. The video/game overlay is illustrative and not measured or predicted neural activity.
+Soma locations only, not neurites or the synaptic connectivity graph. Brain selection is superclass-based, not a complete anatomical brain segmentation. The gray atlas is context only. Fly Dino v2 separately overlays 80 simulated cells from a measured-connectivity subset at their exact coordinates. These dimensionless computed activations are not measured firing activity. See /data/connectome/manifest.json.
 
 Reproduce: `uv run --with pyarrow python scripts/build-brain-atlas.py SOURCE.feather`. Audit without writing: append `--check`. The audit requires the exact source hash and compares every output byte, including all positions and body IDs.

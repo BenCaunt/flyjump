@@ -1,45 +1,69 @@
-# Fly Jump
+# Fly Dino
 
-A learned neural policy plays a Dino-style endless runner through an anatomical fly keyboard rig. **[Open the training bench](https://flyjump.cobanov.dev/)**.
+**[Open the experiment](https://flydino.cobanov.dev/)** · [Method and evidence](docs/experiment.md) · [Credits](THIRD_PARTY_NOTICES.md)
 
-- Jump, duck, short hops, fast fall, cacti and three bird altitudes. Keyboard and touch controls.
-- A real **8 → 12 → 3** neural network chooses **run / jump / duck** at 30 Hz. Watch its observations, hidden activations, connections and raw action scores live.
-- **Train from scratch** runs CEM neuroevolution in a Web Worker: 64 candidates, 8 elites, 80 generations. Scores from real game rollouts update weights. No teacher labels or scripted action fallback.
-- Export/import checkpoints, export learning curves, and benchmark a checkpoint on 100 held-out courses against rule, random and idle baselines.
-- Published artifacts: [model](public/benchmarks/model.json), [training history](public/benchmarks/training.json), [per-course benchmark](public/benchmarks/benchmark.json). Method and limitations: **[experiment notes](docs/experiment.md)**.
+An 80-cell measured fly connectome circuit drives the **original Chromium Dino** through a learned neural readout. Watch the decisions and computed circuit activity side by side, train from random weights in your browser, and reproduce the benchmark locally.
 
-The shipped checkpoint completed **54/100** held-out three-minute courses (mean survival **104.7 seconds**). The hand-written baseline completed 100/100; random and idle completed 0/100. This is a small, structured-state benchmark, not a claim of biological learning or general intelligence.
+- Original Chromium engine and sprites, pinned source, jump / short hop / duck / fast fall, genuine collision boxes.
+- **8 engineered observations → 80 fixed MaleCNS cells → 16 descending-cell activities → 16–12–3 trained readout → 3 keys.**
+- Real cross-entropy neuroevolution (CEM), 64 candidates, 8 elites, 80 generations, 15,680 episodes. Only the 243 readout parameters learn.
+- Separate live decision network and anatomical activity view. Colored cells use the exact states that feed the action decoder. Gray atlas cells are unmodeled context.
+- Seeded training, import/export checkpoints, learning curves, held-out benchmark and control conditions.
 
-## Controls
+The published checkpoint completed **99/100** held-out 180-second courses (mean survival **179.37 seconds**). The same readout with the circuit silenced completed 0/100; its initial untrained weights also completed 0/100. These results demonstrate learned control and dependence on circuit activity, **not superiority of biological topology**. See per-course results and independent training replicas in [public/benchmarks](public/benchmarks).
 
-Space / Up / Jump: jump. Release early for a short hop. Hold Down / S / Duck: crouch on the ground or fall faster in the air. Manual input takes over from the selected controller. Select Neural network or Rule baseline to return to automatic play. Pause freezes the visible game; Stop ends a background training/evaluation job.
+## Run and reproduce
 
-Normal play runs inference with fixed weights. Training happens only when requested. Training shows the current champion in the visible runner while candidate episodes run headlessly in a worker. A completed/local checkpoint is saved on the device; Restore published model returns to the bundled checkpoint.
-
-## Reproduce
-
-Node 22.18+:
+Node 22.18 or newer:
 
 ```sh
 npm ci
+npm run dev
+# A complete reproducible training run, then independent evaluation:
+npm run train -- 20260912 80
+npm run benchmark
 npm test
 npm run check:assets
 npm run build
-npm run dev
-npm run train -- 20260912 80
-npm run benchmark
 ```
 
-Training and benchmarking overwrite the artifacts in `public/benchmarks/`. The browser and CLI use the same physics, inference and training code. The regression suite reproduces the published per-course benchmark; it does not rerun full training on every build.
+The training command overwrites the published checkpoint and log. To preserve them:
 
-Static Cloudflare Pages project: `flyjump`. Production: https://flyjump.cobanov.dev.
+```sh
+npm run train -- 20260913 80 public/benchmarks/replicates/20260913
+npm run train -- 20260914 80 public/benchmarks/replicates/20260914
+npm run benchmark:replicates
+```
 
-## What is biological?
+The original run took about 7.6 minutes on the development Mac mini; browser/device speeds vary. Training and evaluation run in a worker and can be stopped. Ordinary gameplay uses frozen weights. Browser-local checkpoints persist on the current origin; Export/Import transfers them across domains or devices.
 
-The fly rig uses Flybody anatomy. The separate anatomy tab shows 124,289 classified brain somata from 140,024 measured MaleCNS v1.0 soma positions, preserving native proportions. Its image overlay is illustrative, not firing activity or a biological receptive-field map. The learned 12-neuron hidden layer is an artificial controller; it is **not the fly connectome**, and its input is structured game state rather than camera pixels. No synaptic graph or muscle dynamics is simulated.
+## Controls
 
-Data notices and provenance: `public/data/brain-atlas/NOTICE.md` and `manifest.json`. Flybody retains its Apache-2.0 license and notices. This is an independently written runner with original canvas artwork, not copied Chrome code or sprites; not affiliated with Google Chrome.
+Space / Up / Jump: jump. Release after the minimum jump height for a shorter jump. Hold Down / S / Duck to crouch or drop faster in midair. Manual input takes over. The controller selector returns to automatic play. Manual collisions wait for Restart (or keyboard/canvas jump); automatic modes restart after 1.4 seconds. Pause freezes the game; Stop terminates a background training/evaluation job.
 
-Built with [fly-connectome-template](https://github.com/cobanov/fly-connectome-template) by [Mert Cobanov](https://github.com/cobanov).
+The adapter treats actions as held keys with explicit transitions. Holding Jump does not synthesize browser key-repeat events. This convention is identical in live play and training.
 
-Original template and application code: [Cobanov Template Attribution License 1.0](LICENSE). Web UI and repository attribution are required. Third-party data and assets retain their own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+## What is real, and what is modeled?
+
+**Real source/data:** Chromium game code and pixel sprites; MaleCNS v1.0 cell identities, soma coordinates, neurotransmitter annotations and all 1,296 selected directed connections (26,029 synaptic contacts); Flybody anatomical meshes.
+
+**Engineered model:** an explicitly bounded 80-cell subgraph, game-state-to-visual-cell mapping, signed normalized leaky tanh dynamics, artificial trainable action readout and keyboard rig animation. Computed activity is dimensionless, not measured spikes or membrane voltage. The remaining 124,289-cell atlas is anatomical context, not a whole-brain simulation. No biological fly, muscle simulation or internal synaptic plasticity is claimed.
+
+The circuit is selected using anatomy alone. Source hashes, extraction procedure, channel mapping, equations, benchmark split and limitations are in [the protocol](docs/experiment.md). Rebuild scripts are included; the approximately 1 GB raw connectivity table is downloaded separately, not bundled into the website.
+
+## Shared work and attribution
+
+- **The Chromium Authors:** original Dino code and artwork, BSD 3-Clause.
+- **FlyEM / HHMI Janelia and MaleCNS collaborators:** measured connectome and anatomy, CC BY 4.0.
+- **Turaga Lab / Flybody:** fly anatomy, Apache 2.0.
+- **CodeBullet:** Dino structured observations, score-driven neuroevolution and decision-network visualization inspired this integration. CodeBullet uses NEAT; Fly Dino uses CEM. No unlicensed Processing code was copied.
+- **aome510/chrome-dino-game-rl:** reviewed DQN alternative; not our implemented algorithm.
+- **nftechie/doomfly, liuzihe02/fly-craftax, eganeganegan/flydoom:** connectome learning architecture and experimental-control references. Their methods are distinguished in the [source review](docs/connectome-review.md).
+- **de Boer, Kroese, Mannor and Rubinstein:** cross-entropy method tutorial.
+- Built with [fly-connectome-template](https://github.com/cobanov/fly-connectome-template) by [Mert Cobanov](https://github.com/cobanov).
+
+Full source pins, transformations and licenses: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Original application/template work retains the [Cobanov Template Attribution License 1.0](LICENSE). Third-party licenses remain separate. Independent project, not affiliated with Google Chrome.
+
+## Deployment
+
+Static Vite application. Existing Cloudflare Pages project and GitHub repository remain named `flyjump`; public branding and canonical URL are **Fly Dino / flydino.cobanov.dev**. Deploy with `wrangler pages deploy dist --project-name flyjump --branch main`. The old `flyjump.cobanov.dev` alias remains compatible.
