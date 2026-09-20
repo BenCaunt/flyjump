@@ -1,0 +1,59 @@
+{
+  "checks": [
+    {
+      "seed": 20260912,
+      "split": "published",
+      "courses": 100,
+      "decisionsChecked": 518388,
+      "matchedExactly": true,
+      "completed": 91,
+      "compactModelSha256": "f4cd7d2413fc93bbcbefbae85a8b568881d0384b05523fbc8e97ac7debf09409"
+    },
+    {
+      "seed": 20260912,
+      "split": "fresh",
+      "courses": 100,
+      "decisionsChecked": 490896,
+      "matchedExactly": true,
+      "completed": 84,
+      "compactModelSha256": "f4cd7d2413fc93bbcbefbae85a8b568881d0384b05523fbc8e97ac7debf09409"
+    },
+    {
+      "seed": 20260913,
+      "split": "published",
+      "courses": 100,
+      "decisionsChecked": 428233,
+      "matchedExactly": true,
+      "completed": 68,
+      "compactModelSha256": "1806162c7c8f538eed370341d78395fdfcdd60c7af4039ce65d8e61aa0d5e00a"
+    },
+    {
+      "seed": 20260913,
+      "split": "fresh",
+      "courses": 100,
+      "decisionsChecked": 425823,
+      "matchedExactly": true,
+      "completed": 69,
+      "compactModelSha256": "1806162c7c8f538eed370341d78395fdfcdd60c7af4039ce65d8e61aa0d5e00a"
+    },
+    {
+      "seed": 20260914,
+      "split": "published",
+      "courses": 100,
+      "decisionsChecked": 540000,
+      "matchedExactly": true,
+      "completed": 100,
+      "compactModelSha256": "72a03f8fc51dcb2b33a6a625cec94343736d8f096f582a8f860bc65ec29d4a0f"
+    },
+    {
+      "seed": 20260914,
+      "split": "fresh",
+      "courses": 100,
+      "decisionsChecked": 540000,
+      "matchedExactly": true,
+      "completed": 100,
+      "compactModelSha256": "72a03f8fc51dcb2b33a6a625cec94343736d8f096f582a8f860bc65ec29d4a0f"
+    }
+  ],
+  "note": "Independent rollout calls only observation(), forwardCompact(), and tickRunner(auto=false). It never instantiates or steps a connectome."
+}

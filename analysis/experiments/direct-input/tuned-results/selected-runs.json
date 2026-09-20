@@ -1,0 +1,23 @@
+[
+  {
+    "gain": 1,
+    "seed": 20260912,
+    "directory": "experiments/direct-input/tuned-results/candidates/1/20260912",
+    "validation": 2898,
+    "generation": 16
+  },
+  {
+    "gain": 1,
+    "seed": 20260913,
+    "directory": "experiments/direct-input/tuned-results/replicates/20260913",
+    "validation": 2898,
+    "generation": 23
+  },
+  {
+    "gain": 1,
+    "seed": 20260914,
+    "directory": "experiments/direct-input/tuned-results/replicates/20260914",
+    "validation": 2898,
+    "generation": 9
+  }
+]

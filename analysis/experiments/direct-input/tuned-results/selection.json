@@ -1,0 +1,41 @@
+{
+  "frozenAt": "2026-09-20T16:37:22.005Z",
+  "rule": "Train four affine input gains for 80 generations each on seed 20260912. Choose highest four-course validation score; break ties by earliest selected generation, then smaller gain. Freeze gain before training the other two seeds and before all test evaluations.",
+  "chosen": {
+    "gain": 1,
+    "seed": 20260912,
+    "directory": "experiments/direct-input/tuned-results/candidates/1/20260912",
+    "validation": 2898,
+    "generation": 16
+  },
+  "candidates": [
+    {
+      "gain": 0.5,
+      "seed": 20260912,
+      "directory": "experiments/direct-input/tuned-results/candidates/0.5/20260912",
+      "validation": 2898,
+      "generation": 29
+    },
+    {
+      "gain": 1,
+      "seed": 20260912,
+      "directory": "experiments/direct-input/tuned-results/candidates/1/20260912",
+      "validation": 2898,
+      "generation": 16
+    },
+    {
+      "gain": 2,
+      "seed": 20260912,
+      "directory": "experiments/direct-input/tuned-results/candidates/2/20260912",
+      "validation": 2898,
+      "generation": 29
+    },
+    {
+      "gain": 4,
+      "seed": 20260912,
+      "directory": "experiments/direct-input/tuned-results/candidates/4/20260912",
+      "validation": 2898,
+      "generation": 17
+    }
+  ]
+}

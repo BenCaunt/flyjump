@@ -1,4 +1,19 @@
-# Fly Dino
+# Fly Dino: direct-input control experiment
+
+This fork of [cobanov/flyjump](https://github.com/cobanov/flyjump) adds a reproducible control experiment by Ben Caunt. It trains the existing action readout on the same engineered observations without connectome computation. The original application, training implementation, published checkpoints, and upstream documentation below are preserved.
+
+**Result:** one ordinary 147-parameter, 8–12–3 controller completed all 100 published test courses and all 100 additional test courses. Results varied across training seeds; the original connectome system had higher average completion across the three seeds tested. The input-scaling sweep used additional development compute. This demonstrates that strong performance is possible without fly connectivity, but does not establish equal training reliability or that the connectome provides no benefit.
+
+- [Full findings, every training seed, and limitations](analysis/experiments/direct-input/FINDINGS.md)
+- [Setup and reproduction](analysis/README.md)
+- [Publication notes and verification](analysis/PUBLICATION.md)
+- [Successful standalone 147-parameter checkpoint](analysis/experiments/direct-input/tuned-results/replicates/20260914/compact-model.json)
+
+The additions are in `analysis/`; the upstream experiment is pinned to commit `c08c86bc18efd8125964b1d2ca4fc1df59700f30`. This is an independent follow-up, not an upstream endorsement. The original [license](LICENSE), attribution, and third-party notices remain applicable.
+
+---
+
+# Original Fly Dino documentation
 
 **[Open the experiment](https://flydino.cobanov.dev/)** · [Method and evidence](docs/experiment.md) · [Credits](THIRD_PARTY_NOTICES.md)
 

@@ -1,0 +1,85 @@
+Tuning protocol frozen at experiments/direct-input/tuned-results/manifest.json
+gain=0.5 seed=20260912 generation=1 train=52.33 validation=54.75 elapsed=0.1s
+gain=0.5 seed=20260912 generation=10 train=365.00 validation=215.50 elapsed=1.1s
+gain=0.5 seed=20260912 generation=20 train=1191.00 validation=1146.75 elapsed=2.5s
+gain=0.5 seed=20260912 generation=30 train=2898.00 validation=2898.00 elapsed=6.8s
+gain=0.5 seed=20260912 generation=40 train=2898.00 validation=2898.00 elapsed=17.9s
+gain=0.5 seed=20260912 generation=50 train=2898.00 validation=2898.00 elapsed=31.3s
+gain=0.5 seed=20260912 generation=60 train=2898.00 validation=2898.00 elapsed=44.7s
+gain=0.5 seed=20260912 generation=70 train=2898.00 validation=2898.00 elapsed=58.2s
+gain=0.5 seed=20260912 generation=80 train=2898.00 validation=2898.00 elapsed=72.5s
+gain=1 seed=20260912 generation=1 train=83.00 validation=60.25 elapsed=0.1s
+gain=1 seed=20260912 generation=10 train=994.00 validation=761.00 elapsed=1.1s
+gain=1 seed=20260912 generation=20 train=2898.00 validation=2898.00 elapsed=3.8s
+gain=1 seed=20260912 generation=30 train=2898.00 validation=2898.00 elapsed=18.7s
+gain=1 seed=20260912 generation=40 train=2898.00 validation=2898.00 elapsed=38.2s
+gain=1 seed=20260912 generation=50 train=2898.00 validation=2898.00 elapsed=56.4s
+gain=1 seed=20260912 generation=60 train=2898.00 validation=2898.00 elapsed=77.6s
+gain=1 seed=20260912 generation=70 train=2898.00 validation=2898.00 elapsed=98.0s
+gain=1 seed=20260912 generation=80 train=2898.00 validation=2898.00 elapsed=119.2s
+gain=2 seed=20260912 generation=1 train=81.00 validation=56.50 elapsed=0.1s
+gain=2 seed=20260912 generation=10 train=193.00 validation=158.75 elapsed=1.0s
+gain=2 seed=20260912 generation=20 train=2898.00 validation=2766.50 elapsed=3.9s
+gain=2 seed=20260912 generation=30 train=2898.00 validation=2898.00 elapsed=22.2s
+gain=2 seed=20260912 generation=40 train=2898.00 validation=2898.00 elapsed=47.5s
+gain=2 seed=20260912 generation=50 train=2898.00 validation=2898.00 elapsed=73.0s
+gain=2 seed=20260912 generation=60 train=2898.00 validation=2898.00 elapsed=100.6s
+gain=2 seed=20260912 generation=70 train=2898.00 validation=2898.00 elapsed=126.4s
+gain=2 seed=20260912 generation=80 train=2898.00 validation=2898.00 elapsed=153.2s
+gain=4 seed=20260912 generation=1 train=56.33 validation=49.00 elapsed=0.1s
+gain=4 seed=20260912 generation=10 train=535.67 validation=216.75 elapsed=1.2s
+gain=4 seed=20260912 generation=20 train=2898.00 validation=2898.00 elapsed=4.1s
+gain=4 seed=20260912 generation=30 train=2898.00 validation=2898.00 elapsed=14.8s
+gain=4 seed=20260912 generation=40 train=2898.00 validation=2898.00 elapsed=32.0s
+gain=4 seed=20260912 generation=50 train=2898.00 validation=2898.00 elapsed=52.0s
+gain=4 seed=20260912 generation=60 train=2898.00 validation=2898.00 elapsed=71.1s
+gain=4 seed=20260912 generation=70 train=2898.00 validation=2898.00 elapsed=89.5s
+gain=4 seed=20260912 generation=80 train=2898.00 validation=2898.00 elapsed=108.5s
+Gain frozen by validation: 1; score=2898; generation=16
+gain=1 seed=20260913 generation=1 train=57.00 validation=47.50 elapsed=0.1s
+gain=1 seed=20260913 generation=10 train=95.67 validation=132.50 elapsed=1.0s
+gain=1 seed=20260913 generation=20 train=189.00 validation=367.75 elapsed=2.3s
+gain=1 seed=20260913 generation=30 train=2898.00 validation=2898.00 elapsed=8.3s
+gain=1 seed=20260913 generation=40 train=2898.00 validation=2898.00 elapsed=23.3s
+gain=1 seed=20260913 generation=50 train=2898.00 validation=2898.00 elapsed=40.1s
+gain=1 seed=20260913 generation=60 train=2898.00 validation=2898.00 elapsed=55.8s
+gain=1 seed=20260913 generation=70 train=2898.00 validation=2898.00 elapsed=70.8s
+gain=1 seed=20260913 generation=80 train=2898.00 validation=2898.00 elapsed=86.4s
+gain=1 seed=20260914 generation=1 train=66.33 validation=56.75 elapsed=0.1s
+gain=1 seed=20260914 generation=10 train=2898.00 validation=2898.00 elapsed=1.4s
+gain=1 seed=20260914 generation=20 train=2898.00 validation=2898.00 elapsed=4.4s
+gain=1 seed=20260914 generation=30 train=2898.00 validation=2898.00 elapsed=13.7s
+gain=1 seed=20260914 generation=40 train=2898.00 validation=2898.00 elapsed=27.8s
+gain=1 seed=20260914 generation=50 train=2898.00 validation=2898.00 elapsed=45.7s
+gain=1 seed=20260914 generation=60 train=2898.00 validation=2898.00 elapsed=61.9s
+gain=1 seed=20260914 generation=70 train=2898.00 validation=2898.00 elapsed=77.6s
+gain=1 seed=20260914 generation=80 train=2898.00 validation=2898.00 elapsed=93.6s
+Tuning and replica training complete. Beginning held-out evaluation.
+direct-affine seed=20260912 split=published completed=91/100 meanSeconds=172.795 meanScore=2771.07
+direct-affine seed=20260912 split=fresh completed=84/100 meanSeconds=163.631 meanScore=2619.54
+direct-affine seed=20260913 split=published completed=68/100 meanSeconds=142.743 meanScore=2261.24
+direct-affine seed=20260913 split=fresh completed=69/100 meanSeconds=141.940 meanScore=2249.76
+direct-affine seed=20260914 split=published completed=100/100 meanSeconds=180.000 meanScore=2898.00
+direct-affine seed=20260914 split=fresh completed=100/100 meanSeconds=180.000 meanScore=2898.00
+connectome seed=20260912 split=published completed=99/100 meanSeconds=179.372 meanScore=2885.75
+connectome seed=20260912 split=fresh completed=99/100 meanSeconds=179.372 meanScore=2885.75
+connectome seed=20260913 split=published completed=85/100 meanSeconds=174.396 meanScore=2788.70
+connectome seed=20260913 split=fresh completed=86/100 meanSeconds=176.040 meanScore=2820.67
+connectome seed=20260914 split=published completed=100/100 meanSeconds=180.000 meanScore=2898.00
+connectome seed=20260914 split=fresh completed=99/100 meanSeconds=179.184 meanScore=2882.22
+┌─────────┬─────────────────┬──────────┬─────────────┬──────────┬────────────────────┐
+│ (index) │ kind            │ seed     │ split       │ survived │ meanSeconds        │
+├─────────┼─────────────────┼──────────┼─────────────┼──────────┼────────────────────┤
+│ 0       │ 'direct-affine' │ 20260912 │ 'published' │ 91       │ 172.79516666665504 │
+│ 1       │ 'direct-affine' │ 20260912 │ 'fresh'     │ 84       │ 163.6311666666557  │
+│ 2       │ 'direct-affine' │ 20260913 │ 'published' │ 68       │ 142.74283333332465 │
+│ 3       │ 'direct-affine' │ 20260913 │ 'fresh'     │ 69       │ 141.9398333333246  │
+│ 4       │ 'direct-affine' │ 20260914 │ 'published' │ 100      │ 179.99999999998678 │
+│ 5       │ 'direct-affine' │ 20260914 │ 'fresh'     │ 100      │ 179.99999999998678 │
+│ 6       │ 'connectome'    │ 20260912 │ 'published' │ 99       │ 179.37199999998705 │
+│ 7       │ 'connectome'    │ 20260912 │ 'fresh'     │ 99       │ 179.37199999998705 │
+│ 8       │ 'connectome'    │ 20260913 │ 'published' │ 85       │ 174.39633333332299 │
+│ 9       │ 'connectome'    │ 20260913 │ 'fresh'     │ 86       │ 176.03966666665573 │
+│ 10      │ 'connectome'    │ 20260914 │ 'published' │ 100      │ 179.99999999998678 │
+│ 11      │ 'connectome'    │ 20260914 │ 'fresh'     │ 99       │ 179.18366666665366 │
+└─────────┴─────────────────┴──────────┴─────────────┴──────────┴────────────────────┘
